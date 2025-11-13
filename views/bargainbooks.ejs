@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bargain Books</title>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      background: #e1ad93;
+      color: #cfc6be;
+      margin: 40px;
+    }
+    h1 { margin-bottom: 20px; color: #5b3717; }
+    table {
+      width: 70%;
+      border-collapse: collapse;
+      background: #3a2f29;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #4c403a;
+    }
+    th { background: #4e3d35; color: #f9e6ca; }
+    tr:hover td { background: #44352f; }
+  </style>
+</head>
+
+<body>
+  <h1>Bargain Books (Under £20)</h1>
+
+  <table>
+    <tr><th>Title</th><th>Price (£)</th></tr>
+    <% booksUnder20.forEach(book => { %>
+      <tr>
+        <td><%= book.name %></td>
+        <td><%= book.price %></td>
+      </tr>
+    <% }) %>
+  </table>
+</body>
+</html>

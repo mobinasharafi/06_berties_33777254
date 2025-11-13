@@ -29,6 +29,22 @@ router.get('/list', function(req, res, next) {
         }
     })
 })
+// Show books that cost less than £20
+router.get('/bargainbooks', function (req, res, next) {
+
+    // finding the books that cost under £20
+    let findCostsUnder20 = "SELECT * FROM books WHERE price < 20"
+
+    db.query(findCostsUnder20, (error, booksUnder20) => {
+        if (error) {
+            next(error)
+        } else {
+            // Render the bargainbooks page with our new list
+            res.render("bargainbooks.ejs", { booksUnder20 })
+        }
+    })
+})
+
 
 // Export the router object so index.js can access it
 module.exports = router
