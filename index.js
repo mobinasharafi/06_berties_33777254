@@ -1,11 +1,24 @@
-// Import express and ejs
-var express = require ('express')
+// Import express, ejs, path, mysql
+var express = require('express')
 var ejs = require('ejs')
 const path = require('path')
+var mysql = require('mysql2')
 
 // Create the express application object
 const app = express()
 const port = 8000
+
+// Connect to the database
+const db = mysql.createPool({
+    host: 'localhost',
+    user: 'berties_books_app',
+    password: 'qwertyuiop',
+    database: 'berties_books',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+})
+global.db = db
 
 // Tell Express that we want to use EJS as the templating engine
 app.set('view engine', 'ejs')
@@ -17,10 +30,10 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname, 'public')))
 
 // Define our application-specific data
-app.locals.shopData = {shopName: "Bertie's Books"}
+app.locals.shopData = { shopName: "Bertie's Books" }
 
-// Load the route handlers
-const mainRoutes = require("./routes/main")
+// Load the route handlers for /
+const mainRoutes = require('./routes/main')
 app.use('/', mainRoutes)
 
 // Load the route handlers for /users
