@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bertie's Bookshop</title>
+
+  <style>
+    body {
+      font-family: "Georgia", "Times New Roman", serif;
+      background: #f4efe6;
+      color: #3a2f2a;
+      margin: 40px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 25px;
+      letter-spacing: 0.5px;
+    }
+
+    table {
+      width: 70%;
+      border-collapse: collapse;
+      background: #fdfaf5;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    th {
+      background: #4e3f38;
+      color: #fdfaf5;
+      padding: 12px;
+      font-size: 16px;
+      letter-spacing: 0.4px;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #d8ccc2;
+      font-size: 15px;
+    }
+
+    tr:hover td {
+      background: #ece4d9;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Bertie's Bookroom</h1>
+
+  <table>
+    <tr>
+      <th>Title</th>
+      <th>Price (£)</th>
+    </tr>
+
+    <% availableBooks.forEach(book => { %>
+      <tr>
+        <td><%= book.name %></td>
+        <td><%= book.price %></td>
+      </tr>
+    <% }) %>
+  </table>
+</body>
+</html>

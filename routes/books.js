@@ -1,6 +1,10 @@
 // Create a new router
 const express = require("express")
 const router = express.Router()
+// add book to the database route
+router.get('/addbook', function (req, res, next) {
+  res.render('addbook.ejs')
+})
 // const db tp show the database
 const db = global.db;
 
@@ -21,7 +25,7 @@ router.get('/list', function(req, res, next) {
         if (err) {
             next(err)
         } else {
-            res.send(result)
+            res.render("list.ejs", { availableBooks: result })
         }
     })
 })
