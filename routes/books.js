@@ -12,12 +12,31 @@ router.get('/search',function(req, res, next){
     res.render("search.ejs")
 });
 
+// Search for books by their titles
 router.get('/search-result', function (req, res, next) {
-    //searching in the database
-    res.send("You searched for: " + req.query.keyword)
+    // Get the word typed by the user
+  let typedWord = req.query.keyword;
+
+  // look for books with similar titles that may contain the user's typed words
+  let questionForDatabase = "SELECT * FROM books WHERE name LIKE ?";
+
+  // this makes it match titles that contain the word typed by the user
+      let wordInsideTitle = "%" + typedWord + "%";
+  db.query(questionForDatabase, [wordInsideTitle], (err, matchingBooks) => {
+    if (err) {
+      next(err);
+    } else {
+      // show the results on the results page
+      res.render("search-results.ejs", {
+        booksFound: matchingBooks,
+        keyword: typedWord
+      });
+    }
+  });
 });
 
-// Route to show the books from the DB, Runs the SQL query and sends back the rows
+
+// Route to show the books from the database, sends back the rows
 router.get('/list', function(req, res, next) {
     let sqlquery = "SELECT * FROM books"
 

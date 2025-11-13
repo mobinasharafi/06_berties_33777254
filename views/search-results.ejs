@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Results for "<%= keyword %>"</title>
+
+  <style>
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      background: #f4efe6;
+      color: #3a2f2a;
+      margin: 40px;
+    }
+
+    table {
+      width: 70%;
+      border-collapse: collapse;
+      background: #fdfaf5;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-top: 20px;
+    }
+
+    th {
+      background: #4e3f38;
+      color: #fdfaf5;
+      padding: 12px;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #d8ccc2;
+    }
+
+    tr:hover td {
+      background: #ece4d9;
+    }
+
+    a {
+      color: #4e3f38;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Search results for "<%= keyword %>"</h1>
+
+  <% if (booksFound.length === 0) { %>
+    <p>No matching books found.</p>
+  <% } else { %>
+    <table>
+      <tr>
+        <th>Title</th>
+        <th>Price (£)</th>
+      </tr>
+
+      <% booksFound.forEach(book => { %>
+        <tr>
+          <td><%= book.name %></td>
+          <td><%= book.price %></td>
+        </tr>
+      <% }) %>
+    </table>
+  <% } %>
+
+  <p style="margin-top: 20px;">
+    <a href="/books/search">Back to search</a> |
+    <a href="/">Home</a>
+  </p>
+</body>
+</html>
