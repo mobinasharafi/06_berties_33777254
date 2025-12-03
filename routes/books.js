@@ -5,6 +5,10 @@ const router = express.Router()
 router.get('/addbook', function (req, res, next) {
   res.render('addbook.ejs')
 })
+// This route shows the "Add Book" form when visiting /books/add that didn't before
+router.get('/add', function (req, res, next) {
+  res.render('addbook.ejs');
+});
 // const db tp show the database
 const db = global.db;
 
