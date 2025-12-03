@@ -1,14 +1,23 @@
 // Create a new router
-const express = require("express")
-const bcrypt = require('bcrypt')
-const router = express.Router()
-const saltRounds = 10  
+ const express = require("express")
+ const bcrypt = require('bcrypt')
+ const router = express.Router()
+ const saltRounds = 10  
 
-router.get('/register', function (req, res, next) {
+ // redirectLogin Middleware (for Lab 8a)
+ const redirectLogin = (req, res, next) => {
+    if (!req.session.userId) {       // if user isn't logged in
+        res.redirect('/users/login'); // send the user to login page
+    } else {
+        next();                      // else continue normally
+    }
+ };
+
+ router.get('/register', function (req, res, next) {
     res.render('register.ejs')
-})
+ })
 
-router.post('/registered', function (req, res, next) {
+ router.post('/registered', function (req, res, next) {
 
     const plainPassword = req.body.password;
 
@@ -26,11 +35,11 @@ let values = [
     req.body.last,
     req.body.email,
     hashedPassword
-];
+ ];
 
-db.query(sql, values, function(err, data) {
+ db.query(sql, values, function(err, data) {
     if (err) throw err;
-});
+ });
 
         // saving data in database
 
@@ -42,9 +51,10 @@ db.query(sql, values, function(err, data) {
 
         res.send(result);
     });
-}); 
-// Route to list all registered users
-router.get('/list', function (req, res, next) {
+ }); 
+ // Route to list all registered users
+ router.get('/list', redirectLogin, function (req, res, next)
+ {
     let sql = "SELECT username, first, last, email FROM users";
 
     db.query(sql, function (err, rows) {
@@ -86,16 +96,18 @@ router.post('/loggedin', function (req, res, next) {
         // Compare passwords
         bcrypt.compare(enteredPassword, storedHashedPassword, function (err, passwordsMatch) {
 
-            if (err) throw err;
+             if (err) throw err;
 
-            if (passwordsMatch) {
+             if (passwordsMatch) {
                 // Correct password, login successful
                 const logSuccess = "INSERT INTO audit_log (username, success) VALUES (?, 1)";
                 db.query(logSuccess, [enteredUsername]);
 
-                return res.send("Login successful!");
-            } 
-            else {
+                req.session.userId = enteredUsername;   // store user in session (Lab 8a)
+                return res.redirect('/');               // go to homepage on login
+
+             } 
+             else {
                 // Incorrect password → failed login
                 const logFailedAttempt = "INSERT INTO audit_log (username, success) VALUES (?, 0)";
                 db.query(logFailedAttempt, [enteredUsername]);
@@ -107,8 +119,10 @@ router.post('/loggedin', function (req, res, next) {
 
     });
 
-});
-router.get('/audit', function (req, res, next) {
+});   // THIS BRACKET WAS MISSING which was breaking the entire route
+
+
+ router.get('/audit', redirectLogin, function (req, res, next) {
 
     const auditQuery = "SELECT * FROM audit_log ORDER BY timestamp DESC";
 
@@ -118,9 +132,19 @@ router.get('/audit', function (req, res, next) {
         res.render('audit.ejs', { logs: logs });
     });
 
-});
+ });
 
+ // Logout Route (Lab 8a)
 
+ router.get('/logout', (req, res) => {
+    req.session.destroy(err => {   // remove session
+        if (err) {
+            return res.redirect('/'); 
+        }
+        res.clearCookie('connect.sid');  // remove cookie
+        res.redirect('/users/login');    // go to login page
+    });
+ });
 
-// Export the router object so index.js can access it
-module.exports = router
+ // Export the router object so index.js can access it
+ module.exports = router

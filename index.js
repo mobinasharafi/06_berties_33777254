@@ -5,7 +5,8 @@ var express = require('express')
 var ejs = require('ejs')
 const path = require('path')
 var mysql = require('mysql2')
-
+// Lab 8a task 1: Import express-session
+var session = require('express-session') 
 // Create the express application object
 const app = express()
 const port = 8000
@@ -27,6 +28,14 @@ app.set('view engine', 'ejs')
 
 // Set up the body parser 
 app.use(express.urlencoded({ extended: true }))
+
+// Session Middleware (for Lab 8a)
+app.use(session({
+    secret: 'supersecretkey',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }  // fixing the req.session undefined
+}));
 
 // Set up public folder (for css and static js)
 app.use(express.static(path.join(__dirname, 'public')))
