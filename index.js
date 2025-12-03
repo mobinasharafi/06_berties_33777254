@@ -1,3 +1,5 @@
+// dotenv for environment variables
+require('dotenv').config();
 // Import express, ejs, path, mysql
 var express = require('express')
 var ejs = require('ejs')
@@ -10,10 +12,10 @@ const port = 8000
 
 // Connect to the database
 const db = mysql.createPool({
-    host: 'localhost',
-    user: 'berties_books_app',
-    password: 'qwertyuiop',
-    database: 'berties_books',
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0

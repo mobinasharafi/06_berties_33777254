@@ -56,6 +56,71 @@ router.get('/list', function (req, res, next) {
     });
 });
 
+// Users/login route in users.js
+router.get('/login', function(req, res, next) {
+    res.render('login.ejs');
+});
+router.post('/loggedin', function (req, res, next) {
+
+    const enteredUsername = req.body.username;
+    const enteredPassword = req.body.password;
+
+    // finding a user with this username
+    const lookupUserQuery = "SELECT hashedPassword FROM users WHERE username = ?";
+
+    db.query(lookupUserQuery, [enteredUsername], function (err, foundUsers) {
+
+        if (err) throw err;
+
+        // No user found 
+        if (foundUsers.length === 0) {
+
+            const logFailedAttempt = "INSERT INTO audit_log (username, success) VALUES (?, 0)";
+            db.query(logFailedAttempt, [enteredUsername]);
+
+            return res.send("Login failed: username not found");
+        }
+
+        const storedHashedPassword = foundUsers[0].hashedPassword;
+
+        // Compare passwords
+        bcrypt.compare(enteredPassword, storedHashedPassword, function (err, passwordsMatch) {
+
+            if (err) throw err;
+
+            if (passwordsMatch) {
+                // Correct password, login successful
+                const logSuccess = "INSERT INTO audit_log (username, success) VALUES (?, 1)";
+                db.query(logSuccess, [enteredUsername]);
+
+                return res.send("Login successful!");
+            } 
+            else {
+                // Incorrect password → failed login
+                const logFailedAttempt = "INSERT INTO audit_log (username, success) VALUES (?, 0)";
+                db.query(logFailedAttempt, [enteredUsername]);
+
+                return res.send("Login failed: incorrect password");
+            }
+
+        });
+
+    });
+
+});
+router.get('/audit', function (req, res, next) {
+
+    const auditQuery = "SELECT * FROM audit_log ORDER BY timestamp DESC";
+
+    db.query(auditQuery, function (err, logs) {
+        if (err) throw err;
+
+        res.render('audit.ejs', { logs: logs });
+    });
+
+});
+
+
 
 // Export the router object so index.js can access it
 module.exports = router
