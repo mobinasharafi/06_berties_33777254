@@ -3,6 +3,7 @@
  const bcrypt = require('bcrypt')
  const router = express.Router()
  const saltRounds = 10  
+ const { check, validationResult } = require('express-validator');
 
  // redirectLogin Middleware (for Lab 8a)
  const redirectLogin = (req, res, next) => {
@@ -17,8 +18,41 @@
     res.render('register.ejs')
  })
 
- router.post('/registered', function (req, res, next) {
+ router.post(
+    '/registered',
 
+    // server side validation: 
+    // Check that the email looks like a real email
+    // and the username should be between 5 and 20 characters.
+    [
+    check('email').isEmail().withMessage('Invalid email format'),
+
+    check('username')
+        .isLength({ min: 5, max: 20 })
+        .withMessage('Username must be 5–20 characters'),
+
+    // Check password length (minimum 8 characters)
+    check('password')
+        .isLength({ min: 8 })
+        .withMessage('Password must be at least 8 characters'),
+ ],
+
+
+    function (req, res, next) {
+
+    // Validate user input Lab 8bc
+    const errors = validationResult(req);
+
+    // LAB 8bc --> Sanitise user input to prevent XSS attacks
+    req.body.first = req.sanitize(req.body.first);
+
+
+    // If validation fails, go back to register page again with an error message
+    if (!errors.isEmpty()) {
+        return res.send("Validation failed: " + JSON.stringify(errors.array()));
+    }
+
+    // If validation passes, continue hashing the password
     const plainPassword = req.body.password;
 
     // Hashing the password
@@ -28,12 +62,15 @@
             return res.send("Error hashing password");
         }
         // Store hashed password and other user data in the database
-let sql = "INSERT INTO users (username, first, last, email, hashedPassword) VALUES (?, ?, ?, ?, ?)";
-let values = [
+ let sql = "INSERT INTO users (username, first, last, email, hashedPassword) VALUES (?, ?, ?, ?, ?)";
+ let values = [
     req.body.username,
-    req.body.first,
-    req.body.last,
-    req.body.email,
+
+    // sanitizing first name to prevent XSS
+    req.sanitize(req.body.first),
+    // now task 7: sanitizing the last name and email as well
+    req.sanitize(req.body.last),
+    req.sanitize(req.body.email),
     hashedPassword
  ];
 
@@ -42,9 +79,10 @@ let values = [
  });
 
         // saving data in database
-
-        let result = 'Hello ' + req.body.first + ' ' + req.body.last +
-        ' you are now registered! We will send an email to you at ' + req.body.email;
+        // sanitizing first name to prevent XSS lab 8bs
+        // task 7: sanitizing last name and email as well
+        let result = 'Hello ' + req.sanitize(req.body.first) + ' ' + req.sanitize(req.body.last) +
+        ' you are now registered! We will send an email to you at ' + req.sanitize(req.body.email);
 
         result += ' Your password is: ' + req.body.password +
         ' and your hashed password is: ' + hashedPassword;
@@ -104,7 +142,7 @@ router.post('/loggedin', function (req, res, next) {
                 db.query(logSuccess, [enteredUsername]);
 
                 req.session.userId = enteredUsername;   // store user in session (Lab 8a)
-                return res.redirect(req.baseUrl + '/../');               // go to homepage on login
+                return res.redirect('/');              // go to homepage on login
 
              } 
              else {

@@ -62,3 +62,10 @@ Only the hashed password is saved, never the plain password.
 ## audit
 To keep track of login activity, I added an audit_log table to store each login attempt along with 
 whether it was successful or not. The /users/audit route shows all of these attempts in a list.
+
+Lab 8a
+this lab lead us to add basic login protection to the app.
+I used express-session to keep track of the logged-in user, and created a small middleware function that blocks certain pages unless you’re logged in (pages like /list can only be seen after a successful login, while pages like /login and /register stay open to everyone.)
+
+Lab 8bc
+The following rules were enforced: Email must be a valid email format: check('email').isEmail() Username must be 5–20 characters Password must be at least 8 characters long If validation fails, the user is redirected back with an error message. Sanitisation in order to protect the application from XSS, the express-sanitizer middleware was added in index.js and sanitised user input inside /users/registered. I sanitised: First name (as required to demonstrate XSS) Last name Email (I did it however it was not necessary since the email authentication process does not accept symbols such as >) Example: req.body.first = req.sanitize(req.body.first) I tested XSS by entering: Henry .<script>alert("Gothca!")</script> Before sanitisation, the alert executed. After sanitisation, the alert did not execute, proving that user input is cleaned before being displayed. I then added sanctions for last name, username as well as the email. I could have removed the email sanitisation since the email verification does not allow for symbols to be entered either way.

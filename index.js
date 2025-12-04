@@ -7,10 +7,14 @@ const path = require('path')
 var mysql = require('mysql2')
 // Lab 8a task 1: Import express-session
 var session = require('express-session') 
+// Import express-sanitizer
+const expressSanitizer = require('express-sanitizer');
 // Create the express application object
 const app = express()
 const port = 8000
-
+// Use express-sanitizer Middleware (for Lab 8bc)
+app.use(express.urlencoded({ extended: true }));
+app.use(expressSanitizer());
 // Connect to the database
 const db = mysql.createPool({
     host: process.env.DB_HOST,
