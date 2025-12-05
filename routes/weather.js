@@ -38,8 +38,13 @@ router.get('/weather', function (req, res, next) {
 
         // constructing a little HTML snippet to show the weather summary
         const summary = `
-            <div style="max-width:380px;font-family:sans-serif;padding:20px;border:1px solid #ddd;border-radius:6px;background:white;box-shadow:0 2px 6px rgba(0,0,0,0.1);">
-                <h2 style="margin-top:0;margin-bottom:10px;">${data.name}, ${data.sys.country}</h2>
+             <div style="max-width:380px;font-family:sans-serif;padding:20px;border:1px solid #ddd;border-radius:6px;background:white;box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+                <h2 style="margin-top:0;margin-bottom:10px;">
+             ${data.name}, ${data.sys.country}
+             <img src="https://flagsapi.com/${data.sys.country}/flat/32.png"
+             style="width:26px;height:18px;margin-left:6px;vertical-align:middle;">
+             </h2>
+
                 <div>
                     <img src="${icon}" style="width:60px;height:60px;vertical-align:middle;margin-right:10px;">
                     <span style="font-size:18px;">${data.weather[0].description}</span>
@@ -54,7 +59,8 @@ router.get('/weather', function (req, res, next) {
 
         // simple layout with a form at the top and the weather summary below
         res.send(`
-            <div style="padding:50px;background:#f7f9fc;">
+             <div style="min-height:100vh;padding:50px;background:#d6e7ff;">
+
                 <form method="GET" action="/weather" style="margin-bottom:50px;">
                     <input type="text" name="city" placeholder="Enter city" style="padding:8px;width:200px;">
                     <button type="submit" style="padding:8px 12px;">Get Weather</button>
