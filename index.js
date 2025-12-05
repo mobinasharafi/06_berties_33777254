@@ -15,6 +15,8 @@ const port = 8000
 // Use express-sanitizer Middleware (for Lab 8bc)
 app.use(express.urlencoded({ extended: true }));
 app.use(expressSanitizer());
+//Lab 9a: Import and use the weather route
+app.use('/', require('./routes/weather'));
 // Connect to the database
 const db = mysql.createPool({
     host: process.env.DB_HOST,
