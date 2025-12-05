@@ -71,4 +71,15 @@ Lab 8bc
 The following rules were enforced: Email must be a valid email format: check('email').isEmail() Username must be 5–20 characters Password must be at least 8 characters long If validation fails, the user is redirected back with an error message. Sanitisation in order to protect the application from XSS, the express-sanitizer middleware was added in index.js and sanitised user input inside /users/registered. I sanitised: First name (as required to demonstrate XSS) Last name Email (I did it however it was not necessary since the email authentication process does not accept symbols such as >) Example: req.body.first = req.sanitize(req.body.first) I tested XSS by entering: Henry .<script>alert("Gothca!")</script> Before sanitisation, the alert executed. After sanitisation, the alert did not execute, proving that user input is cleaned before being displayed. I then added sanctions for last name, username as well as the email. I could have removed the email sanitisation since the email verification does not allow for symbols to be entered either way.
 
 Lab 9a
+
 In Lab 9a, we were instructed to add a /weather route that calls the OpenWeatherMap API using the request module. The route accepts a city parameter (default set to: London), parses the JSON response, and renders a compact weather card (temperature, description, humidity, sunrise/sunset, and a weather icon). Invalid parameters for location are returned with a simple fallback view instead of breaking the app, so the route stays functional even when the API may return an error.
+
+Lab 9b
+
+In this lab we were asked to provide an API version of the book data. I added a new /api/books route that returns the books table as JSON instead of rendering an EJS view. The endpoint supports optional query parameters, so the API can return a filtered result set if needed, see below:
+
+?search=… ---> partial title search
+?minprice=…&maxprice=… ---> price range filter
+?sort=name or ?sort=price ---> sorting order
+
+These parameters can be combined in a single request. If no parameters are provided, the route returns all of the books. The structure we created is similar to the /books/list logic, but adapted for JSON output so other applications can use the data directly as instructed.
