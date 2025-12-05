@@ -1,6 +1,10 @@
 // Create a new router
 const express = require("express")
 const router = express.Router()
+// trying to fix the add book route issue
+router.get('/', (req, res, next) => {
+  res.redirect('/usr/455/books/list');
+});
 // add book to the database route
 router.get('/addbook', function (req, res, next) {
   res.render('addbook.ejs')

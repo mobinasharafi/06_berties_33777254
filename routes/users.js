@@ -142,7 +142,7 @@ router.post('/loggedin', function (req, res, next) {
                 db.query(logSuccess, [enteredUsername]);
 
                 req.session.userId = enteredUsername;   // store user in session (Lab 8a)
-                return res.redirect('/');              // go to homepage on login
+                return res.redirect('/usr/455/');           // go to homepage on login
 
              } 
              else {
